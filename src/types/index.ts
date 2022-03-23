@@ -16,3 +16,8 @@ export interface PgConfig {
     max: number;
     idleTimeoutMillis: number;
 }
+
+export interface ResCustom {
+    c: number, // count
+    d: any,
+}

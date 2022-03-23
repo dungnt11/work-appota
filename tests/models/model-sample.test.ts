@@ -1,8 +1,5 @@
 import { Pool } from 'pg';
-import {
-    getTimeModel,
-    sampleTransactionModel,
-} from '../../src/models/model-sample';
+import { getTimeModel } from '../../src/models/model-sample';
 
 // mock pg/Pool in in utils/dbUtil
 jest.mock('pg', () => {
@@ -37,20 +34,5 @@ describe('getTimeModel', () => {
         const res = await getTimeModel();
         expect(pool.query).toBeCalledWith('SELECT NOW() as now;', undefined);
         expect(res).toEqual({ rows: [], rowCount: 0 });
-    });
-});
-
-describe('sampleTransactionModel', () => {
-    let pool: any;
-    beforeEach(() => {
-        pool = new Pool();
-    });
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
-    it('should success', async () => {
-        pool.query.mockResolvedValueOnce({ rows: [], rowCount: 0 });
-        const res = await sampleTransactionModel();
-        expect(res).toEqual('transaction success');
     });
 });

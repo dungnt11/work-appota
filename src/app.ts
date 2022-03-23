@@ -3,11 +3,19 @@ import express from 'express';
 import cluster from 'cluster';
 import { logger } from './utils/logger';
 import { cpus } from 'os';
+import bodyParser from 'body-parser';
+import apicache from 'apicache';
 //import controllers
 import { healthcheck } from './controllers/controller-healthcheck';
-import { getTime, sampleTransaction } from './controllers/controller-sample';
+import { allProducts, detailProduct } from './controllers/controller-product';
+import { purchaseProductsTransaction } from './controllers/controller-purchase';
+// Util
+import redisCache from './utils/cache';
 
 const numCPUs = cpus().length;
+const cacheWithRedis = apicache.options({ redisClient: redisCache }).middleware;
+
+const TIME_CACHE = '1 hour';
 
 if (cluster.isPrimary) {
     // create a worker for each CPU
@@ -30,18 +38,21 @@ if (cluster.isPrimary) {
     const router: express.Router = express.Router();
 
     app.use(express.json());
+    app.use(bodyParser.urlencoded({ extended: false }))
     app.use(router); // tell the app this is the router we are using
 
     //healthcheck routes
-    router.get('/', healthcheck);
-    router.get('/healthcheck', healthcheck);
-    // sampleController routes
-    router.get('/servertime', getTime);
-    router.get('/transaction', sampleTransaction);
+    router.get('/', cacheWithRedis(TIME_CACHE), healthcheck);
+    router.get('/healthcheck', cacheWithRedis(TIME_CACHE), healthcheck);
 
+    // Product
+    router.get('/api/products', cacheWithRedis(TIME_CACHE), allProducts);
+    router.get('/api/products/:idProduct', cacheWithRedis(TIME_CACHE), detailProduct);
+
+    // Purchase
+    router.post('/api/purchase', purchaseProductsTransaction);
     app.listen(config.port, function () {
-        const workerId =
-            cluster.worker && cluster.worker.id ? cluster.worker.id : undefined;
+        const workerId = cluster.worker && cluster.worker.id ? cluster.worker.id : undefined;
         logger.info(
             `worker started: ${workerId} | server listening on port: ${config.port}`
         );

@@ -1,67 +1,97 @@
-# Skeleton of a node.js / typescript / express / postgres app
+## What is project?
 
-## Install Node / NPM
+This is the project in my job application email. 
 
-https://docs.npmjs.com/getting-started/installing-node
+## What technology is used in the project?
 
-## Install TypeScript
+1. NodeJS (Express)
+2. Possgres
+3. Redis cache
+4. Typescript
 
-https://www.npmjs.com/package/typescript
+## What have I done?
 
-## Create table in your Postgres DB:
+1. GET: api/products
 
+    Lấy toàn bộ products sử dụng
+
+    Filter product bằng query
+
+    ```typescript
+    export type queryFilter = {
+      sortBy: string,
+      orderBy: number, // 0: DESC | 1: ASC
+      offset: number,
+      limit: number,
+      name: string,
+    }
+    ```
+
+2. GET api/products/:idProduct
+
+    Lấy chi tiết product theo ID
+
+3. POST api/purchase
+
+    Tình trạng mua hàng của user với transaction trong possgres
+## What's API responsive?
+
+Data chuẩn cho responsive như sau
+```typescript
+{
+  c: {number}, // số lượng phần tử
+  d: {data}, // data trả về
+}
 ```
-CREATE TABLE test (
-  testcolumn VARCHAR(20)
-);
+
+## How to start?
+
+1. Run code
+
+    Cài đặt docker và chạy lệnh sau
+    ```bash
+    docker-compose up
+    ```
+
+    Đợi cho các container hoàn thành. Lúc này bạn có thể test với các đầu API như sau
+
+    > Docker có sử dụng `database-seed.sql` để tạo table và thêm dữ liệu giả
+
+2. Dev
+
+    Để phát triển ứng dụng thêm bạn sẽ chạy lệnh sau
+    ```bash
+    docker-compose down && docker-compose up --build
+    ```
+
+3. Test
+    Chưa phát triển hết
+
+## API done (Postman import)
+
+1. Get all products
+
+```CURL
+curl --location --request GET 'http://localhost:3000/api/products'
 ```
 
-## Download this repo
+2. Get detail product
 
-download and run `npm install`
+```CURL
+curl --location --request GET 'http://localhost:3000/api/products/1'
+```
 
-## Set the following ENV VARs for your DB Connections:
+3. Purchase
 
-`export DB_USER='' DB='' DB_PASS='' DB_HOST='' DB_PORT='' DB_MAX_CLIENTS='' DB_IDLE_TIMEOUT_MS=''`
+```CURL
+curl --location --request POST 'http://localhost:3000/api/purchase' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "idUser": 1,
+    "idProduct": [1,2]
+}'
+```
 
-this can also be done by creating a `.env` file in the root of this project see `.env.example` for a reference
+---
 
-## Quickstart: transpile, lint and start the app all at once
-
-`npm start`
-
-### Or each step individually:
-
-1. Transpile TypeScript to the build folder
-
-run `tsc`
-
-1. Run ESLint
-
-`npm run lint`
-
-1. Run your built node app
-
-`node build/app.js`
-
-## Routes
-
-http://localhost:3000/healthcheck and root return healthcheck
-
-http://localhost:3000/servertime - returns servertime
-
-http://localhost:3000/transaction - deletes then inserts into your DB using a transaction
-
-## Testing
-
-- basic unit test examples have been added using [Jest](https://jestjs.io/docs/getting-started)
-
-`npm test`
-
-## node-postgres package
-
--   documentation [here](https://node-postgres.com/)
-
--   use [parameterized queries](https://github.com/brianc/node-postgres/wiki/FAQ#8-does-node-postgres-handle-sql-injection) to prevent SQL injection
-
--   if you want to do more with [data types](https://node-postgres.com/features/types)
+Còn vài đầu api tương tự chưa hoàn thành do em bận quá. Em xin chân thành cảm ơn!
