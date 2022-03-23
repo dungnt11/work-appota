@@ -8,6 +8,7 @@ This is the project in my job application email.
 2. Possgres
 3. Redis cache
 4. Typescript
+5. Multiple core nodeJS
 
 ## What have I done?
 
@@ -91,6 +92,12 @@ curl --location --request POST 'http://localhost:3000/api/purchase' \
     "idProduct": [1,2]
 }'
 ```
+
+## Test chịu tải app với 4 core ram 4
+
+- 10000 reqs/s
+
+![MarineGEO circle logo](/docs/test_request.png "10000reqs/s")
 
 ---
 
